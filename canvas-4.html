@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<canvas id="canvas" style="background: #000; border: 1px solid #000;"></canvas>
+	<script>
+		const canvas = document.getElementById('canvas');
+		const ctx = canvas.getContext('2d');
+		const drawCanvas = {
+			init: function() {
+				canvas.width = 500;
+				canvas.height = 500;
+				ctx.lineWidth = 1;
+				ctx.translate(.5, .5);
+			},
+			/*
+			 * 循环画线
+			 * @param {Numebr} 起点(a, b) 终点(c, d)
+			 * @param {String} color
+			 */
+			cycleline: function(a, b, c, d, color) {
+				ctx.beginPath();
+				ctx.moveTo(a, b);
+				ctx.lineTo(c, d);
+				ctx.strokeStyle = color;
+				ctx.stroke();
+			},
+			/*
+			 * 获取圆上点的坐标
+			 * @param {Number} deg
+			 * @param {Number} rad
+			 * @return {Array} [x, y]
+			 */
+			getCirclePoint: function(deg, radius) {
+				let rad = deg / 360 * 2 * Math.PI;
+				let pointPosition = [];
+				let x = Math.cos(rad) * radius;
+				let y = Math.sin(rad) * radius;
+				pointPosition.push(x, y);
+				pointPosition = this.translateCirclePoint(pointPosition);
+				return pointPosition;
+			},
+			/*
+			 * 坐标转换
+			 * @param {Array} [x, y]
+			 * @return {Array} [x, y]
+			 */
+			translateCirclePoint: function(arr) {
+				let _arr = [];
+				_arr[0] = arr[0] + 250;
+				_arr[1] = 250 - arr[1];
+				return _arr;
+			},
+			circle: function() {
+				ctx.beginPath();
+				ctx.arc(250, 250, 150, 0, 2*Math.PI);
+				ctx.strokeStyle = '#fff';
+				ctx.stroke();
+				for (let i = 0; i < 160; i++) {
+					let a, b, c, d;
+					a = 280;
+					b = 280;
+					c = this.getCirclePoint(2.25 * i, 150)[0];
+					d = this.getCirclePoint(2.25 * i, 150)[1];
+					this.cycleline(a, b, c, d, '#D2E4F0');
+				}
+			},
+			rectangle: function() {
+				ctx.strokeStyle = '#fff';
+				ctx.strokeRect(50, 50, 400, 400);
+				for (let i = 0 ; i < 4; i++){
+					for(let j = 0; j < 40; j++) {
+						let a, b, c, d;
+						a = this.getCirclePoint(90 + 2.25 * j + 90 * i, 150)[0];
+						b = this.getCirclePoint(90 + 2.25 * j + 90 * i, 150)[1];
+						switch(i) {
+							case 0:
+								c = 450 - 10 * j;
+								d = 50;
+								break;
+							case 1:
+								c = 50;
+								d = 50 + 10 * j;
+								break;
+							case 2:
+								c = 50 + 10 * j;
+								d = 450;
+								break;
+							case 3:
+								c = 450;
+								d = 450 - 10 * j;
+						}
+						this.cycleline(a, b, c, d, '#D2E4F0');
+					}
+				}
+			},
+		}
+		drawCanvas.init();
+		drawCanvas.circle();
+		drawCanvas.rectangle();
+	</script>
+</body>
+</html>

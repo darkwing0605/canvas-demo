@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<canvas id="canvas" style="background: #000; border: 1px solid #000;"></canvas>
+	<script>
+		const canvas = document.getElementById('canvas');
+		const ctx = canvas.getContext('2d');
+		const drawCanvas = {
+			init: function() {
+				canvas.width = 500;
+				canvas.height = 500;
+				ctx.lineWidth = 1;
+				ctx.translate(0.5, 0.5);
+			},
+			/*
+			 * 循环画线
+			 * @param {Numebr} 起点(a, b) 终点(c, d)
+			 * @param {String} color
+			 */
+			cycleline: function(a, b, c, d, color) {
+				ctx.beginPath();
+				ctx.moveTo(a, b);
+				ctx.lineTo(c, d);
+				ctx.strokeStyle = color;
+				ctx.stroke();
+			},
+			star: function() {
+				// 两条坐标轴
+				this.cycleline(250, 50, 250, 450, '#ED9B62');
+				this.cycleline(50, 250, 450, 250, '#ED9B62');
+				// 四个象限
+ 				for(let i = 0; i < 4; i++) {
+ 					// 每个象限循环画线
+					for(let j = 0; j < 40; j++) {
+						let a = 250;
+						let b = (i <= 1 ? 50 : 450) + j * 5 * (i <= 1 ? 1 : -1);
+						let c = 250 - j * 5 * (-1) ** i;
+						let d = 250;
+						this.cycleline(a, b, c, d, '#ED9B62');
+					}
+				}
+			},
+			/*
+			 * 获取圆上点的坐标
+			 * @param {Number} deg
+			 * @param {Number} rad
+			 * @return {Array} [x, y]
+			 */
+			getCirclePoint: function(deg, radius) {
+				let rad = deg / 360 * 2 * Math.PI;
+				let pointPosition = [];
+				let x = Math.cos(rad) * radius;
+				let y = Math.sin(rad) * radius;
+				pointPosition.push(x, y);
+				return pointPosition;
+			},
+			circle: function() {
+				ctx.beginPath();
+				ctx.arc(250, 250, 200, 0, 2*Math.PI);
+				ctx.strokeStyle = '#ED9B62';
+				ctx.stroke();
+				// 四个象限
+				for (let i = 0; i < 4; i++) {
+					// 
+					for (let j = 1; j < 41; j++){
+						let a = (i % 2 === 0 ? 250 : (i === 1 ? 50 : 450)) + j * (i < 2 ? 1 : -1) * 5;
+						let b = 250;
+						let deg = 90 / 40 * j + 90 * i;
+						let c = this.getCirclePoint(deg, 200)[0] + 250;
+						let d = 250 - this.getCirclePoint(deg, 200)[1];
+						this.cycleline(a, b, c, d, '#ED9B62');
+						a = 250;
+						b = (i % 2 === 0 ? (i === 0 ? 50 : 450) : 250) + j * (i > 0 && i < 3 ? -1 : 1) * 5;
+						this.cycleline(a, b, c, d, '#ED9B62');
+					}
+				}
+			},
+		}
+		drawCanvas.init();
+		drawCanvas.star();
+		drawCanvas.circle();
+	</script>
+</body>
+</html>
